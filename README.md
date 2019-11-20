@@ -6,11 +6,12 @@ Authentication is provided via Bearer-Token and needs to be set as environment v
 
 ### Docker
 #### Create new version:
-```
-docker build -t dev089/bk-sync-app:latest -t dev089/bk-sync-app:0.0.X .
-```
+
+`./gradlew clean jar`
+
+`docker build -t dev089/bk-sync-app:latest -t dev089/bk-sync-app:0.X.X .`
 
 #### Push to Dockerhub
-```
-docker push dev089/bk-sync-app:0.0.X
-```
+`docker login`<br />
+`docker push dev089/bk-sync-app:0.X.X`<br />
+`docker push dev089/bk-sync-app:latest`
