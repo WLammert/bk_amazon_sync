@@ -89,7 +89,6 @@ public class Updater extends TimerTask {
                     LOGGER.error("could not process request - pleaze check: {}", request);
                 }
             }
-            LOGGER.debug("Upadted {} products successfully", updatableProducts.size());
         }
     }
 
