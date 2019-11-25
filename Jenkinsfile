@@ -1,14 +1,7 @@
 pipeline {
-    agent any
-
+    agent { label 'java11' }
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'gradle:6.0.1-jre11'
-                    args '-v "$PWD":/home/gradle/project -w /home/gradle/project gradle gradle <gradle-task>'
-                }
-            }
             steps {
                 timeout(10) {
                     cleanWs()
