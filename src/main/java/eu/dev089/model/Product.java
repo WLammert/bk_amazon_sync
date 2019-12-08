@@ -14,8 +14,12 @@ public class Product {
     private final String sku;
     private int amazonQuantity;
     private int amazonDelivery;
+    private boolean override;
 
     public boolean isUpdatable() {
+        if (override) {
+            return override;
+        }
         if (magentoQuantity <= 0) {
             if (amazonDelivery != deliveryStandard || amazonQuantity != STANDARD_AMAZON_QTY) {
                 amazonQuantity = STANDARD_AMAZON_QTY;
@@ -38,6 +42,7 @@ public class Product {
         this.amazonDelivery = builder.amazonDelivery;
         this.amazonQuantity = builder.amazonQuantity;
         this.deliveryStandard = builder.deliveryStandard;
+        this.override = builder.override;
         this.sku = builder.sku;
     }
 
@@ -64,6 +69,7 @@ public class Product {
         private Integer amazonDelivery;
         private Integer deliveryStandard;
         private String sku;
+        private boolean override;
 
         ProductBuilder() {
         }
@@ -78,9 +84,15 @@ public class Product {
         }
 
         private boolean jsonSuccessfullyParsed(JsonObject json) {
-            this.magentoQuantity = json.get("extension_attributes")
-                    .getAsJsonObject().get("stock_item")
-                    .getAsJsonObject().get("qty").getAsInt();
+            this.magentoQuantity = 0;
+            try {
+                this.magentoQuantity = json.get("extension_attributes")
+                        .getAsJsonObject().get("stock_item")
+                        .getAsJsonObject().get("qty").getAsInt();
+            } catch (Exception e) {
+                LOGGER.warn("SKU {} had no valid quantity, set to 0, please check!", sku);
+                this.override = true;
+            }
 
             for (JsonElement element : json.get("custom_attributes").getAsJsonArray()) {
                 switch (element.getAsJsonObject().get("attribute_code").getAsString()) {
@@ -98,11 +110,10 @@ public class Product {
                     return true;
                 }
             }
-            if (amazonQuantity == null) {
+            if (amazonQuantity == null || amazonDelivery == null) {
                 this.amazonQuantity = this.magentoQuantity;
-            }
-            if (amazonDelivery == null) {
                 this.amazonDelivery = this.deliveryStandard;
+                this.override = true;
             }
             return false;
         }
