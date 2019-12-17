@@ -16,12 +16,12 @@ import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Updater extends TimerTask {
 
-    private static final Logger LOGGER = LogManager.getLogger(Updater.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Updater.class);
     private final RequestCreator creator;
     private ConnectionPool pool = new ConnectionPool(10, 30, TimeUnit.SECONDS);
     private OkHttpClient client;
@@ -109,8 +109,7 @@ public class Updater extends TimerTask {
     private Optional<JsonObject> readResponse(Request request) {
         Optional<JsonObject> jsonObject = Optional.empty();
         String body = null;
-        try {
-            var response = client.newCall(request).execute();
+        try (var response = client.newCall(request).execute()) {
             if (response.isSuccessful()) {
                 body = response.body().string();
                 jsonObject = Optional.of(JsonParser.parseString(body).getAsJsonObject());

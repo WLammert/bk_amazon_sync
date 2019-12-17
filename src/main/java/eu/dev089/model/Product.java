@@ -2,12 +2,12 @@ package eu.dev089.model;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Product {
 
-    private static final Logger LOGGER = LogManager.getLogger(Product.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Product.class);
     public static final int STANDARD_AMAZON_QTY = 33;
     private final int magentoQuantity;
     private final int deliveryStandard;
