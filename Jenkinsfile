@@ -1,13 +1,16 @@
 pipeline {
-    agent any
+    agent {
+        label 'gradle'
+    }
     stages {
         stage('Build') {
             steps {
                 timeout(10) {
                     cleanWs()
                     checkout scm
-
-                    sh './gradlew clean build'
+                    sh 'pwd'
+                    sh 'ls -alh'
+                    sh 'gradle test'
                 }
             }
             post {
