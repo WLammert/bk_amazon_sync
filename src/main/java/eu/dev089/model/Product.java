@@ -83,8 +83,8 @@ public class Product {
             }
         }
 
-        private boolean jsonSuccessfullyParsed(JsonObject json) {
-            this.magentoQuantity = 0;
+        boolean jsonSuccessfullyParsed(JsonObject json) {
+                this.magentoQuantity = 0;
             try {
                 this.magentoQuantity = json.get("extension_attributes")
                         .getAsJsonObject().get("stock_item")
