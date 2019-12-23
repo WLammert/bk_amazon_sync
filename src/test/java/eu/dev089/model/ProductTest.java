@@ -25,6 +25,11 @@ class ProductTest {
         assertThat(result, is(false));
     }
 
+    @Test
+    void name() {
+        System.out.println("waldi");
+    }
+
     @Disabled
     @Test
     void runUpdater() {
