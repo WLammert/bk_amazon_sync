@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'gradle'
+        label 'gradle6_jre11'
     }
     stages {
         stage('Build') {
@@ -8,8 +8,6 @@ pipeline {
                 timeout(10) {
                     cleanWs()
                     checkout scm
-                    sh 'pwd'
-                    sh 'ls -alh'
                     sh 'gradle test'
                 }
             }

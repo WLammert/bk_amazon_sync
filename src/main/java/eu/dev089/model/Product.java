@@ -84,7 +84,7 @@ public class Product {
         }
 
         boolean jsonSuccessfullyParsed(JsonObject json) {
-                this.magentoQuantity = 0;
+            this.magentoQuantity = 0;
             try {
                 this.magentoQuantity = json.get("extension_attributes")
                         .getAsJsonObject().get("stock_item")
@@ -97,13 +97,13 @@ public class Product {
             for (JsonElement element : json.get("custom_attributes").getAsJsonArray()) {
                 switch (element.getAsJsonObject().get("attribute_code").getAsString()) {
                     case "amazon_qty":
-                        this.amazonQuantity = element.getAsJsonObject().get("value").getAsInt();
+                        this.amazonQuantity = getValueAsInteger(element, "amazon_qty");
                         break;
                     case "delivery":
-                        this.amazonDelivery = element.getAsJsonObject().get("value").getAsInt();
+                        this.amazonDelivery = getValueAsInteger(element, "delivery");
                         break;
                     case "delivery_wenn_na":
-                        this.deliveryStandard = element.getAsJsonObject().get("value").getAsInt();
+                        this.deliveryStandard = getValueAsInteger(element, "delivery_wenn_na");
                         break;
                 }
                 if (amazonQuantity != null && amazonDelivery != null && deliveryStandard != null) {
@@ -116,6 +116,16 @@ public class Product {
                 this.override = true;
             }
             return false;
+        }
+
+        private Integer getValueAsInteger(JsonElement element, String fieldName) {
+            Integer intValue = 0;
+            try {
+                intValue = element.getAsJsonObject().get("value").getAsInt();
+            } catch (NumberFormatException e) {
+                LOGGER.warn("SKU {}: Nichtnumerischer Wert im Feld {}, bitte korrigieren!", this.sku, fieldName);
+            }
+            return intValue;
         }
 
         public ProductBuilder setMagentoQuantity(int qty) {
