@@ -7,19 +7,17 @@ import org.slf4j.LoggerFactory;
 
 public class Product {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Product.class);
+    public static final Integer STANDARD_DELIVERY_WHEN_NA = 10;
     public static final int STANDARD_AMAZON_QTY = 33;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Product.class);
+
     private final int magentoQuantity;
     private final int deliveryStandard;
     private final String sku;
     private int amazonQuantity;
     private int amazonDelivery;
-    private boolean override;
 
     public boolean isUpdatable() {
-        if (override) {
-            return override;
-        }
         if (magentoQuantity <= 0) {
             if (amazonDelivery != deliveryStandard || amazonQuantity != STANDARD_AMAZON_QTY) {
                 amazonQuantity = STANDARD_AMAZON_QTY;
@@ -42,12 +40,19 @@ public class Product {
         this.amazonDelivery = builder.amazonDelivery;
         this.amazonQuantity = builder.amazonQuantity;
         this.deliveryStandard = builder.deliveryStandard;
-        this.override = builder.override;
         this.sku = builder.sku;
     }
 
     public String getSku() {
         return sku;
+    }
+
+    public int getMagentoQuantity() {
+        return magentoQuantity;
+    }
+
+    public int getDeliveryStandard() {
+        return deliveryStandard;
     }
 
     public int getAmazonQuantity() {
@@ -62,6 +67,17 @@ public class Product {
         return new ProductBuilder();
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "magentoQuantity=" + magentoQuantity +
+                ", deliveryStandard=" + deliveryStandard +
+                ", sku='" + sku + '\'' +
+                ", amazonQuantity=" + amazonQuantity +
+                ", amazonDelivery=" + amazonDelivery +
+                '}';
+    }
+
     public static final class ProductBuilder {
 
         private Integer magentoQuantity;
@@ -69,53 +85,52 @@ public class Product {
         private Integer amazonDelivery;
         private Integer deliveryStandard;
         private String sku;
-        private boolean override;
 
         ProductBuilder() {
         }
 
-        public ProductBuilder setJson(JsonObject json) {
-            if (jsonSuccessfullyParsed(json)) {
-                return this;
-            } else {
-                LOGGER.error("Product {} had empty values which were filled with standards, please check them!!!", sku);
-                return this;
+        public ProductBuilder parseJson(JsonObject json) {
+            this.magentoQuantity = parseQuantity(json);
+
+            for (var element : json.get("custom_attributes").getAsJsonArray()) {
+                switch (element.getAsJsonObject().get("attribute_code").getAsString()) {
+                    case "amazon_qty":
+                        this.amazonQuantity = getValueAsInteger(element, "amazon_qty");
+                        break;
+                    case "delivery":
+                        this.amazonDelivery = getValueAsInteger(element, "delivery");
+                        break;
+                    case "delivery_wenn_na":
+                        this.deliveryStandard = getValueAsInteger(element, "delivery_wenn_na");
+                        break;
+                }
             }
+            return this;
         }
 
-        private boolean jsonSuccessfullyParsed(JsonObject json) {
-            this.magentoQuantity = 0;
+        int parseQuantity(JsonObject json) {
+            var quantity = 0;
             try {
-                this.magentoQuantity = json.get("extension_attributes")
+                quantity = json.get("extension_attributes")
                         .getAsJsonObject().get("stock_item")
                         .getAsJsonObject().get("qty").getAsInt();
             } catch (Exception e) {
                 LOGGER.warn("SKU {} had no valid quantity, set to 0, please check!", sku);
-                this.override = true;
             }
+            return quantity;
+        }
 
-            for (JsonElement element : json.get("custom_attributes").getAsJsonArray()) {
-                switch (element.getAsJsonObject().get("attribute_code").getAsString()) {
-                    case "amazon_qty":
-                        this.amazonQuantity = element.getAsJsonObject().get("value").getAsInt();
-                        break;
-                    case "delivery":
-                        this.amazonDelivery = element.getAsJsonObject().get("value").getAsInt();
-                        break;
-                    case "delivery_wenn_na":
-                        this.deliveryStandard = element.getAsJsonObject().get("value").getAsInt();
-                        break;
-                }
-                if (amazonQuantity != null && amazonDelivery != null && deliveryStandard != null) {
-                    return true;
+        Integer getValueAsInteger(JsonElement element, String fieldName) {
+            var intValue = 0;
+            try {
+                intValue = element.getAsJsonObject().get("value").getAsInt();
+            } catch (NullPointerException | NumberFormatException e) {
+                LOGGER.warn("SKU {}: Nichtnumerischer Wert im Feld {}, bitte korrigieren!", this.sku, fieldName);
+                if (fieldName.equals("delivery_wenn_na")) {
+                    intValue = STANDARD_DELIVERY_WHEN_NA;
                 }
             }
-            if (amazonQuantity == null || amazonDelivery == null) {
-                this.amazonQuantity = this.magentoQuantity;
-                this.amazonDelivery = this.deliveryStandard;
-                this.override = true;
-            }
-            return false;
+            return intValue;
         }
 
         public ProductBuilder setMagentoQuantity(int qty) {

@@ -97,7 +97,7 @@ public class Updater extends TimerTask {
         if (jsonObject.isPresent()) {
             var product = Product.builder()
                     .setSku(sku)
-                    .setJson(jsonObject.get())
+                    .parseJson(jsonObject.get())
                     .build();
             if (product.isUpdatable()) {
                 return Optional.of(product);
