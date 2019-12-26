@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 
 public class Product {
 
-    public static final Integer STANDARD_DELIVERY_WHENN_NA = 10;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Product.class);
+    public static final Integer STANDARD_DELIVERY_WHEN_NA = 10;
     public static final int STANDARD_AMAZON_QTY = 33;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Product.class);
+
     private final int magentoQuantity;
     private final int deliveryStandard;
     private final String sku;
@@ -67,6 +67,17 @@ public class Product {
         return new ProductBuilder();
     }
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "magentoQuantity=" + magentoQuantity +
+                ", deliveryStandard=" + deliveryStandard +
+                ", sku='" + sku + '\'' +
+                ", amazonQuantity=" + amazonQuantity +
+                ", amazonDelivery=" + amazonDelivery +
+                '}';
+    }
+
     public static final class ProductBuilder {
 
         private Integer magentoQuantity;
@@ -81,7 +92,7 @@ public class Product {
         public ProductBuilder parseJson(JsonObject json) {
             this.magentoQuantity = parseQuantity(json);
 
-            for (JsonElement element : json.get("custom_attributes").getAsJsonArray()) {
+            for (var element : json.get("custom_attributes").getAsJsonArray()) {
                 switch (element.getAsJsonObject().get("attribute_code").getAsString()) {
                     case "amazon_qty":
                         this.amazonQuantity = getValueAsInteger(element, "amazon_qty");
@@ -116,7 +127,7 @@ public class Product {
             } catch (NullPointerException | NumberFormatException e) {
                 LOGGER.warn("SKU {}: Nichtnumerischer Wert im Feld {}, bitte korrigieren!", this.sku, fieldName);
                 if (fieldName.equals("delivery_wenn_na")) {
-                    intValue = STANDARD_DELIVERY_WHENN_NA;
+                    intValue = STANDARD_DELIVERY_WHEN_NA;
                 }
             }
             return intValue;
