@@ -6,12 +6,13 @@ import static eu.dev089.JsonTemplates.getWithDelivery;
 import static eu.dev089.JsonTemplates.getWithDeliveryWhenNa;
 import static eu.dev089.JsonTemplates.getWithQuantity;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import eu.dev089.components.Updater;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -56,16 +57,37 @@ class ProductTest {
         );
     }
 
-    private static Matcher<Product> amazonDeliveryIs(int delivery){
+
+    private static Matcher<Product> amazonDeliveryIs(int delivery) {
         return createFeatureMatcher(CoreMatchers.is(delivery), "amazonDelivery", Product::getAmazonDelivery);
     }
 
-    private static Matcher<Product> deliveryStandardIs(int deliveryStandard){
+    private static Matcher<Product> deliveryStandardIs(int deliveryStandard) {
         return createFeatureMatcher(CoreMatchers.is(deliveryStandard), "deliveryWhenNa", Product::getDeliveryStandard);
     }
 
-    private static Matcher<Product> amazonQuantityIs(int quantity){
+    private static Matcher<Product> amazonQuantityIs(int quantity) {
         return createFeatureMatcher(CoreMatchers.is(quantity), "amazonQuantity", Product::getAmazonQuantity);
+    }
+
+    @Test
+    void handlesNullValues() {
+        var json = "{\"attribute_code\":\"amazon_qty\"}";
+        var element = JsonParser.parseString(json).getAsJsonObject();
+
+        var result = Product.builder().getValueAsInteger(element, "amazon_qty");
+
+        assertThat(result, is(0));
+    }
+
+    @Test
+    void handlesNullDeliveryWhenNaToStandard() {
+        var json = "{\"attribute_code\":\"delivery_wenn_na\"}";
+        var element = JsonParser.parseString(json).getAsJsonObject();
+
+        var result = Product.builder().getValueAsInteger(element, "delivery_wenn_na");
+
+        assertThat(result, is(Product.STANDARD_DELIVERY_WHENN_NA));
     }
 
 

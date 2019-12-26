@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 public class Product {
 
+    public static final Integer STANDARD_DELIVERY_WHENN_NA = 10;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Product.class);
     public static final int STANDARD_AMAZON_QTY = 33;
     private final int magentoQuantity;
@@ -107,14 +109,14 @@ public class Product {
             return quantity;
         }
 
-        private Integer getValueAsInteger(JsonElement element, String fieldName) {
+        Integer getValueAsInteger(JsonElement element, String fieldName) {
             var intValue = 0;
             try {
                 intValue = element.getAsJsonObject().get("value").getAsInt();
-            } catch (NumberFormatException e) {
+            } catch (NullPointerException | NumberFormatException e) {
                 LOGGER.warn("SKU {}: Nichtnumerischer Wert im Feld {}, bitte korrigieren!", this.sku, fieldName);
                 if (fieldName.equals("delivery_wenn_na")) {
-                    intValue = 10;
+                    intValue = STANDARD_DELIVERY_WHENN_NA;
                 }
             }
             return intValue;
