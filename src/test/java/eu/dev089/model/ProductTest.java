@@ -1,6 +1,5 @@
 package eu.dev089.model;
 
-import static eu.dev089.FeatureMatcher.createFeatureMatcher;
 import static eu.dev089.JsonTemplates.getValidProductAsJsonObject;
 import static eu.dev089.JsonTemplates.getWithAmazonQuantity;
 import static eu.dev089.JsonTemplates.getWithDelivery;
@@ -16,18 +15,18 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import eu.dev089.ProductMatchers;
 import eu.dev089.model.Product.ProductBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.stream.Stream;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ProductTest {
+class ProductTest extends ProductMatchers {
 
     private final ProductBuilder builder = Product.builder();
 
@@ -60,26 +59,6 @@ class ProductTest {
                 arguments(getWithAmazonQuantity("3"), amazonQuantityIs(3)),
                 arguments(getWithQuantity("7"), magentoQuantityIs(7))
         );
-    }
-
-    private static Matcher<Product> amazonDeliveryIs(int delivery) {
-        return createFeatureMatcher(CoreMatchers.is(delivery), "amazonDelivery", Product::getAmazonDelivery);
-    }
-
-    private static Matcher<Product> deliveryStandardIs(int deliveryStandard) {
-        return createFeatureMatcher(CoreMatchers.is(deliveryStandard), "deliveryWhenNa", Product::getDeliveryStandard);
-    }
-
-    private static Matcher<Product> amazonQuantityIs(int quantity) {
-        return createFeatureMatcher(CoreMatchers.is(quantity), "amazonQuantity", Product::getAmazonQuantity);
-    }
-
-    private static Matcher<Product> magentoQuantityIs(int quantity) {
-        return createFeatureMatcher(CoreMatchers.is(quantity), "magentoQuantity", Product::getMagentoQuantity);
-    }
-
-    private static Matcher<Product> skuIs(String sku) {
-        return createFeatureMatcher(CoreMatchers.is(sku), "sku", Product::getSku);
     }
 
     @Test
@@ -230,10 +209,6 @@ class ProductTest {
                 arguments(availableProduct),
                 arguments(unavailableProduct)
         );
-    }
-
-    private static Matcher<Product> needsUpdate(boolean update) {
-        return createFeatureMatcher(CoreMatchers.is(update), "update", Product::isUpdatable);
     }
 
     @Test
