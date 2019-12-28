@@ -21,34 +21,11 @@ public class RequestCreator {
                 .addHeader("Connection", "keep-alive");
     }
 
-    public Request getActiveProductSkus() {
-        var query = "searchCriteria[filter_groups][0][filters][0][field]=status&searchCriteria[filter_groups][0][filters][0][value]=1&searchCriteria[filter_groups][0][filters][0][condition_type]=finset&fields=items[sku]";
-        return requestBuilder("products" + "?" + query).get().build();
-    }
-
-    public Request get100SkuForPage(int page) {
-        var query =
-                "searchCriteria[filter_groups][0][filters][0][field]=status&searchCriteria[filter_groups][0][filters][0][value]=1&searchCriteria[filter_groups][0][filters][0][condition_type]=finset&fields=items[sku]&searchCriteria[current_page]="
-                        + String.valueOf(page) + "&searchCriteria[page_size]=500";
-        return requestBuilder("products" + "?" + query).get().build();
-    }
-
-    public Request getAmazonCategoryProducts() {
-        var query = "searchCriteria[filterGroups][0][filters][0][field]=category_id& searchCriteria[filterGroups][0][filters][0][value]=2927&searchCriteria[filterGroups][0][filters][0][conditionType]=eq&fields=items[sku,name]";
-        return requestBuilder("products" + "?" + query).get().build();
-    }
-
     public Request getAmazonCategoryProducts(int page) {
         var query =
                 "searchCriteria[filterGroups][0][filters][0][field]=category_id& searchCriteria[filterGroups][0][filters][0][value]=2927&searchCriteria[filterGroups][0][filters][0][conditionType]=eq&fields=items[sku,name]&searchCriteria[current_page]="
                         + page + "&searchCriteria[page_size]=200";
         return requestBuilder("products" + "?" + query).get().build();
-    }
-
-    public Request getFirst100ForTesting() {
-        var request =
-                "products?searchCriteria[filterGroups][0][filters][0][field]=category_id& searchCriteria[filterGroups][0][filters][0][value]=2927&searchCriteria[filterGroups][0][filters][0][conditionType]=eq&fields=items[sku,name]&searchCriteria[current_page]=1&searchCriteria[page_size]=100";
-        return requestBuilder(request).get().build();
     }
 
     public Request updateProductRequest(Product product) {
