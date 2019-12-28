@@ -7,7 +7,7 @@ pipeline {
                 timeout(10) {
                     cleanWs()
                     checkout scm
-                    sh 'gradle test pitest'
+                    sh 'gradle test pitest jacocoTestReport'
                 }
             }
             post {

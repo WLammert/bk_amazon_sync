@@ -8,6 +8,7 @@ buildscript {
 
 plugins {
     id 'java'
+    id 'jacoco'
     id 'info.solidsoft.pitest' version '1.4.6'
 }
 
@@ -36,6 +37,15 @@ pitest {
     historyInputLocation = "build/tmp/pitesttemp"
     historyOutputLocation = "build/tmp/pitesttemp"
     failWhenNoMutations = false
+}
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
 }
 
 jar {
