@@ -1,5 +1,14 @@
+buildscript {
+    configurations.maybeCreate("pitest")
+    dependencies {
+        classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.4.6'
+        pitest 'org.pitest:pitest-junit5-plugin:0.10'
+    }
+}
+
 plugins {
     id 'java'
+    id 'info.solidsoft.pitest' version '1.4.6'
 }
 
 repositories {
@@ -18,6 +27,16 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+pitest {
+    testPlugin = "junit5"
+    targetClasses = ['eu.dev089.*']
+    outputFormats = ['XML', 'HTML']
+    reportDir ="build/test-results"
+    historyInputLocation = "build/tmp/pitesttemp"
+    historyOutputLocation = "build/tmp/pitesttemp"
+    failWhenNoMutations = false
 }
 
 jar {
