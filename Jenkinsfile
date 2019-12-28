@@ -1,9 +1,9 @@
 pipeline {
-    agent {
-        label 'gradle6_jre11'
-    }
     stages {
-        stage('Build') {
+        stage('Tests') {
+            agent {
+                label 'gradle6_jre11'
+            }
             steps {
                 timeout(10) {
                     cleanWs()
