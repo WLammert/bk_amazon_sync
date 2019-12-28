@@ -33,7 +33,6 @@ pitest {
     testPlugin = "junit5"
     targetClasses = ['eu.dev089.*']
     outputFormats = ['XML', 'HTML']
-    reportDir ="build/test-results"
     historyInputLocation = "build/tmp/pitesttemp"
     historyOutputLocation = "build/tmp/pitesttemp"
     failWhenNoMutations = false
