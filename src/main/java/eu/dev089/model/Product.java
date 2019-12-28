@@ -24,6 +24,7 @@ public class Product {
                 amazonDelivery = deliveryStandard;
                 return true;
             }
+            return false;
         } else {
             if (amazonDelivery != 0 || amazonQuantity != magentoQuantity) {
                 amazonQuantity = magentoQuantity;
@@ -32,7 +33,6 @@ public class Product {
             }
             return false;
         }
-        return false;
     }
 
     private Product(ProductBuilder builder) {

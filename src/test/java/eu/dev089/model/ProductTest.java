@@ -172,6 +172,23 @@ class ProductTest {
     }
 
     @Test
+    void correctsAmazonDeliveryAndQuantityWhenSoldout() {
+        var product = Product.builder()
+                .setSku("007")
+                .setMagentoQuantity(-11)
+                .setAmazonQuantity(-11)
+                .setDeliveryStandard(10)
+                .setAmazonDelivery(0)
+                .build();
+
+        assertThat(product, allOf(
+                needsUpdate(true),
+                amazonDeliveryIs(10),
+                amazonQuantityIs(STANDARD_AMAZON_QTY)
+        ));
+    }
+
+    @Test
     void correctsDeliveryWhenRestocked() {
         var product = Product.builder()
                 .setSku("007")
@@ -187,17 +204,32 @@ class ProductTest {
         ));
     }
 
-    @Test
-    void noNeedForUpdate() {
-        var product = Product.builder()
+    @ParameterizedTest
+    @MethodSource("notUpdatableProducts")
+    void noNeedForUpdate(Product product) {
+        assertThat(product, needsUpdate(false));
+    }
+
+    static Stream<Arguments> notUpdatableProducts() {
+        var availableProduct = Product.builder()
                 .setSku("007")
                 .setMagentoQuantity(10)
                 .setAmazonQuantity(10)
                 .setDeliveryStandard(10)
                 .setAmazonDelivery(0)
                 .build();
+        var unavailableProduct = Product.builder()
+                .setSku("008")
+                .setMagentoQuantity(-10)
+                .setAmazonQuantity(33)
+                .setDeliveryStandard(10)
+                .setAmazonDelivery(10)
+                .build();
 
-        assertThat(product, needsUpdate(false));
+        return Stream.of(
+                arguments(availableProduct),
+                arguments(unavailableProduct)
+        );
     }
 
     private static Matcher<Product> needsUpdate(boolean update) {
