@@ -1,4 +1,7 @@
 pipeline {
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
     agent none
     stages {
         stage('Tests') {
