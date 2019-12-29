@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class UpdaterTest {
 
     private Updater updater = new Updater();
-    private RequestCreator creator = new RequestCreator();
+    private RequestCreator creator = new RequestCreator(System.getenv().get("BK_TOKEN"));
 
 
     void run() {

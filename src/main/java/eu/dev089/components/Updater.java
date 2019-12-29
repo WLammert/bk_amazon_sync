@@ -27,8 +27,7 @@ public class Updater extends TimerTask {
     private OkHttpClient client;
 
     public Updater() {
-        this.creator = new RequestCreator();
-
+        this.creator = new RequestCreator(System.getenv().get("BK_TOKEN"));
     }
 
     @Override

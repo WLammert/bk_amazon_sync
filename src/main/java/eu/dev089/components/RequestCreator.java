@@ -8,15 +8,19 @@ import okhttp3.RequestBody;
 public class RequestCreator {
 
     private static final String URL = "https://www.bienenkorb-shop.de/index.php/rest/V1/";
+    private final String token;
 
-    private Request.Builder requestBuilder(String contextPath) {
-        var bk_token = System.getenv().get("BK_TOKEN");
-        if (bk_token == null || bk_token.isEmpty()) {
+    public RequestCreator(String token) {
+        if (token == null || token.isEmpty()) {
             throw new IllegalArgumentException("please provide a bearer token via ENV");
         }
+        this.token = token;
+    }
+
+    Request.Builder requestBuilder(String contextPath) {
         return new Request.Builder()
                 .url(URL + contextPath)
-                .addHeader("Authorization", String.format("Bearer %s", bk_token))
+                .addHeader("Authorization", String.format("Bearer %s", token))
                 .addHeader("Cache-Control", "no-cache")
                 .addHeader("Connection", "keep-alive");
     }
