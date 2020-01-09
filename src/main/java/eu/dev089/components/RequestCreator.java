@@ -33,7 +33,7 @@ public class RequestCreator {
     }
 
     public Request updateProductRequest(Product product) {
-        var anotherJson = String.format("{\n"
+        var json = String.format("{\n"
                 + "  \"product\": {\n"
                 + "  \t\"sku\": \"%s\",\n"
                 + "    \"custom_attributes\": [\n"
@@ -49,7 +49,7 @@ public class RequestCreator {
                 + "  \"saveOptions\": true\n"
                 + "}", product.getSku(), product.getAmazonQuantity(), product.getAmazonDelivery());
 
-        var body = RequestBody.create(anotherJson, MediaType.parse("application/json"));
+        var body = RequestBody.create(json, MediaType.parse("application/json"));
         return requestBuilder(String.format("products/%s/", product.getSku())).put(body).build();
     }
 

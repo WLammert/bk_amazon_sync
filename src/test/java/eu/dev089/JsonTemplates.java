@@ -2,16 +2,9 @@ package eu.dev089;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import eu.dev089.model.Product;
 
 public class JsonTemplates {
-
-    public static JsonObject getValidProductAsJsonObject() {
-        return JsonParser
-                .parseString(
-                        String.format(JSON, DEFAULT_SKU, DEFAULT_QUANTITY, DEFAULT_AMAZON_QUANTITY, DEFAULT_DELIVERY,
-                                DEFAULT_LIEFERZEIT, DEFAULT_DELIVERY_WHEN_NA))
-                .getAsJsonObject();
-    }
 
     private static final String JSON = "{\n"
             + "  \"sku\": \"%s\",\n"
@@ -48,6 +41,22 @@ public class JsonTemplates {
     public static final String DEFAULT_LIEFERZEIT = "10";
     public static final String DEFAULT_DELIVERY_WHEN_NA = "0";
 
+    public static JsonObject getValidProductAsJsonObject() {
+        return JsonParser
+                .parseString(
+                        String.format(JSON, DEFAULT_SKU, DEFAULT_QUANTITY, DEFAULT_AMAZON_QUANTITY, DEFAULT_DELIVERY,
+                                DEFAULT_LIEFERZEIT, DEFAULT_DELIVERY_WHEN_NA))
+                .getAsJsonObject();
+    }
+
+    public static JsonObject getWithSku(String sku) {
+        return JsonParser
+                .parseString(
+                        String.format(JSON, sku, DEFAULT_QUANTITY, DEFAULT_AMAZON_QUANTITY, DEFAULT_DELIVERY,
+                                DEFAULT_LIEFERZEIT, DEFAULT_DELIVERY_WHEN_NA))
+                .getAsJsonObject();
+    }
+
     public static JsonObject getWithQuantity(String quantity) {
         return JsonParser
                 .parseString(
@@ -78,5 +87,9 @@ public class JsonTemplates {
                         String.format(JSON, DEFAULT_SKU, DEFAULT_QUANTITY, DEFAULT_AMAZON_QUANTITY, DEFAULT_DELIVERY,
                                 DEFAULT_LIEFERZEIT, deliveryWhenNa))
                 .getAsJsonObject();
+    }
+
+    public static Product getValidProduct(String sku){
+        return Product.builder().setSku(sku).parseJson(getWithSku(sku)).build();
     }
 }
