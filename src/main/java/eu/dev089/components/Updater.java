@@ -27,8 +27,11 @@ public class Updater extends TimerTask {
     private OkHttpClient client;
 
     public Updater() {
-        this.creator = new RequestCreator();
+        this(System.getenv().get("BK_TOKEN"));
+    }
 
+    Updater(String token) {
+        this.creator = new RequestCreator(token);
     }
 
     @Override
@@ -72,7 +75,7 @@ public class Updater extends TimerTask {
         client.connectionPool().evictAll();
     }
 
-    private void updateProducts(List<Product> updatableProducts) {
+    void updateProducts(List<Product> updatableProducts) {
         if (!updatableProducts.isEmpty()) {
             for (var product : updatableProducts) {
                 var request = creator.updateProductRequest(product);
@@ -92,7 +95,7 @@ public class Updater extends TimerTask {
         }
     }
 
-    private Optional<Product> processSku(String sku) {
+    Optional<Product> processSku(String sku) {
         var jsonObject = readResponse(creator.getProduktDataForSku(sku));
         if (jsonObject.isPresent()) {
             var product = Product.builder()
