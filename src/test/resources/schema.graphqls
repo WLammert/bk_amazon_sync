@@ -1,0 +1,10 @@
+type Query {
+  data:
+}
+type Product {
+    id: ID
+    name: String
+    pageCount: Int
+    author: Author
+}
+}
